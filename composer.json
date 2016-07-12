@@ -1,0 +1,23 @@
+{
+  "name": "bnet/money-datatype",
+  "description": "Package for a simple money datatype",
+  "minimum-stability": "stable",
+  "license": "proprietary",
+  "authors": [
+    {
+      "name": "Thorsten Buss",
+      "email": "info@buss-networks.de"
+    }
+  ],
+  "require-dev": {
+    "phpunit/phpunit": "5.4.6"
+  },
+  "autoload": {
+    "psr-4": {
+      "Bnet\\": "src",
+      "Tests\\Bnet\\": "tests"
+    }
+  },
+  "require": {
+  }
+}
