@@ -22,7 +22,9 @@ class ArrayRepository implements CurrencyRepositoryInterface {
 	 * @param array $currencies
 	 */
 	public function __construct(array $currencies) {
-		$this->currencies = $currencies;
+		foreach ($currencies as $currency) {
+			$this->currencies[$currency['code']] = $currency;
+		}
 	}
 
 
