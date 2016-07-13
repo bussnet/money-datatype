@@ -16,6 +16,11 @@ class Currency {
 	public static $default_currency = 'EUR';
 
 	/**
+	 * @var bool use a default repository with the main currencies if no repository is defined
+	 */
+	protected static $use_default_currency_repository = true;
+
+	/**
 	 * @var string iso code
 	 */
 	public $code;
@@ -98,7 +103,22 @@ class Currency {
 	 */
 	protected function assertRepository() {
 		if (!self::$repository instanceof CurrencyRepositoryInterface)
-			throw new CurrencyRepositoryException;
+			if (self::$use_default_currency_repository && file_exists(__DIR__.'../../currencies.php')) {
+				self::registerCurrencyRepository(new \Bnet\Money\Repositories\ArrayRepository(
+					include(__DIR__ . '../../currencies.php')
+				));
+			} else {
+				throw new CurrencyRepositoryException;
+			}
+	}
+
+	/**
+	 * use a default repository with the main currencies if no repository is defined
+	 * @param boolean $use_default_currency_repository
+	 * @return $this
+	 */
+	public static function useDefaultCurrencyRepository($use=true) {
+		self::$use_default_currency_repository = $use;
 	}
 
 }

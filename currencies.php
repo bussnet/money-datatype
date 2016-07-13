@@ -1,0 +1,415 @@
+<?php
+/**
+ * User: thorsten
+ * Date: 13.07.16
+ * Time: 16:37
+ */
+return [
+	[
+		'name' => 'U.S. Dollar',
+		'symbol_left' => '$',
+		'symbol_right' => '',
+		'code' => 'USD',
+		'decimal_place' => 2,
+		'value' => 1.00000000,
+		'decimal_mark' => '.',
+		'thousands_separator' => ',',
+		'unit_factor' => 100
+	],
+	[
+		'name' => 'Euro',
+		'symbol_left' => '€',
+		'symbol_right' => '',
+		'code' => 'EUR',
+		'decimal_place' => 2,
+		'value' => 0.74970001,
+		'decimal_mark' => '.',
+		'thousands_separator' => ',',
+		'unit_factor' => 100
+	],
+	[
+		'name' => 'Pound Sterling',
+		'symbol_left' => '£',
+		'symbol_right' => '',
+		'code' => 'GBP',
+		'decimal_place' => 2,
+		'value' => 0.62220001,
+		'decimal_mark' => '.',
+		'thousands_separator' => ',',
+		'unit_factor' => 100
+	],
+	[
+		'name' => 'Australian Dollar',
+		'symbol_left' => '$',
+		'symbol_right' => '',
+		'code' => 'AUD',
+		'decimal_place' => 2,
+		'value' => 0.94790000,
+		'decimal_mark' => '.',
+		'thousands_separator' => ',',
+		'unit_factor' => 100
+	],
+	[
+		'name' => 'Canadian Dollar',
+		'symbol_left' => '$',
+		'symbol_right' => '',
+		'code' => 'CAD',
+		'decimal_place' => 2,
+		'value' => 0.98500001,
+		'decimal_mark' => '.',
+		'thousands_separator' => ',',
+		'unit_factor' => 100
+	],
+	[
+		'name' => 'Czech Koruna',
+		'symbol_left' => '',
+		'symbol_right' => 'Kč',
+		'code' => 'CZK',
+		'decimal_place' => 2,
+		'value' => 19.16900063,
+		'decimal_mark' => '.',
+		'thousands_separator' => ',',
+		'unit_factor' => 100
+	],
+	[
+		'name' => 'Danish Krone',
+		'symbol_left' => 'kr',
+		'symbol_right' => '',
+		'code' => 'DKK',
+		'decimal_place' => 2,
+		'value' => 5.59420013,
+		'decimal_mark' => '.',
+		'thousands_separator' => ',',
+		'unit_factor' => 100
+	],
+	[
+		'name' => 'Hong Kong Dollar',
+		'symbol_left' => '$',
+		'symbol_right' => '',
+		'code' => 'HKD',
+		'decimal_place' => 2,
+		'value' => 7.75290012,
+		'decimal_mark' => '.',
+		'thousands_separator' => ',',
+		'unit_factor' => 100
+	],
+	[
+		'name' => 'Hungarian Forint',
+		'symbol_left' => 'Ft',
+		'symbol_right' => '',
+		'code' => 'HUF',
+		'decimal_place' => 2,
+		'value' => 221.27000427,
+		'decimal_mark' => '.',
+		'thousands_separator' => ',',
+		'unit_factor' => 100
+	],
+	[
+		'name' => 'Israeli New Sheqel',
+		'symbol_left' => '?',
+		'symbol_right' => '',
+		'code' => 'ILS',
+		'decimal_place' => 2,
+		'value' => 3.73559999,
+		'decimal_mark' => '.',
+		'thousands_separator' => ',',
+		'unit_factor' => 100
+	],
+	[
+		'name' => 'Japanese Yen',
+		'symbol_left' => '¥',
+		'symbol_right' => '',
+		'code' => 'JPY',
+		'decimal_place' => 2,
+		'value' => 88.76499939,
+		'decimal_mark' => '.',
+		'thousands_separator' => ',',
+		'unit_factor' => 100
+	],
+	[
+		'name' => 'Mexican Peso',
+		'symbol_left' => '$',
+		'symbol_right' => '',
+		'code' => 'MXN',
+		'decimal_place' => 2,
+		'value' => 12.63899994,
+		'decimal_mark' => '.',
+		'thousands_separator' => ',',
+		'unit_factor' => 100
+	],
+	[
+		'name' => 'Norwegian Krone',
+		'symbol_left' => 'kr',
+		'symbol_right' => '',
+		'code' => 'NOK',
+		'decimal_place' => 2,
+		'value' => 5.52229977,
+		'decimal_mark' => '.',
+		'thousands_separator' => ',',
+		'unit_factor' => 100
+	],
+	[
+		'name' => 'New Zealand Dollar',
+		'symbol_left' => '$',
+		'symbol_right' => '',
+		'code' => 'NZD',
+		'decimal_place' => 2,
+		'value' => 1.18970001,
+		'decimal_mark' => '.',
+		'thousands_separator' => ',',
+		'unit_factor' => 100
+	],
+	[
+		'name' => 'Philippine Peso',
+		'symbol_left' => 'Php',
+		'symbol_right' => '',
+		'code' => 'PHP',
+		'decimal_place' => 2,
+		'value' => 40.58000183,
+		'decimal_mark' => '.',
+		'thousands_separator' => ',',
+		'unit_factor' => 100
+	],
+	[
+		'name' => 'Polish Zloty',
+		'symbol_left' => '',
+		'symbol_right' => 'zł',
+		'code' => 'PLN',
+		'decimal_place' => 2,
+		'value' => 3.08590007,
+		'decimal_mark' => '.',
+		'thousands_separator' => ',',
+		'unit_factor' => 100
+	],
+	[
+		'name' => 'Singapore Dollar',
+		'symbol_left' => '$',
+		'symbol_right' => '',
+		'code' => 'SGD',
+		'decimal_place' => 2,
+		'value' => 1.22560000,
+		'decimal_mark' => '.',
+		'thousands_separator' => ',',
+		'unit_factor' => 100
+	],
+	[
+		'name' => 'Swedish Krona',
+		'symbol_left' => 'kr',
+		'symbol_right' => '',
+		'code' => 'SEK',
+		'decimal_place' => 2,
+		'value' => 6.45870018,
+		'decimal_mark' => '.',
+		'thousands_separator' => ',',
+		'unit_factor' => 100
+	],
+	[
+		'name' => 'Swiss Franc',
+		'symbol_left' => 'CHF',
+		'symbol_right' => '',
+		'code' => 'CHF',
+		'decimal_place' => 2,
+		'value' => 0.92259997,
+		'decimal_mark' => '.',
+		'thousands_separator' => ',',
+		'unit_factor' => 100
+	],
+	[
+		'name' => 'Taiwan New Dollar',
+		'symbol_left' => 'NT$',
+		'symbol_right' => '',
+		'code' => 'TWD',
+		'decimal_place' => 2,
+		'value' => 28.95199966,
+		'decimal_mark' => '.',
+		'thousands_separator' => ',',
+		'unit_factor' => 100
+	],
+	[
+		'name' => 'Thai Baht',
+		'symbol_left' => '฿',
+		'symbol_right' => '',
+		'code' => 'THB',
+		'decimal_place' => 2,
+		'value' => 30.09499931,
+		'decimal_mark' => '.',
+		'thousands_separator' => ',',
+		'unit_factor' => 100
+	],
+	[
+		'name' => 'Ukrainian hryvnia',
+		'symbol_left' => '₴',
+		'symbol_right' => '',
+		'code' => 'UAH',
+		'decimal_place' => 2,
+		'value' => 0.00,
+		'decimal_mark' => '.',
+		'thousands_separator' => ',',
+		'unit_factor' => 100
+	],
+	[
+		'name' => 'Icelandic króna',
+		'symbol_left' => 'kr',
+		'symbol_right' => '',
+		'code' => 'ISK',
+		'decimal_place' => 2,
+		'value' => 0.00,
+		'decimal_mark' => '.',
+		'thousands_separator' => ',',
+		'unit_factor' => 100
+	],
+	[
+		'name' => 'Croatian kuna',
+		'symbol_left' => 'kn',
+		'symbol_right' => '',
+		'code' => 'HRK',
+		'decimal_place' => 2,
+		'value' => 0.00,
+		'decimal_mark' => '.',
+		'thousands_separator' => ',',
+		'unit_factor' => 100
+	],
+	[
+		'name' => 'Romanian leu',
+		'symbol_left' => 'lei',
+		'symbol_right' => '',
+		'code' => 'RON',
+		'decimal_place' => 2,
+		'value' => 0.00,
+		'decimal_mark' => '.',
+		'thousands_separator' => ',',
+		'unit_factor' => 100
+	],
+	[
+		'name' => 'Bulgarian lev',
+		'symbol_left' => 'лв.',
+		'symbol_right' => '',
+		'code' => 'BGN',
+		'decimal_place' => 2,
+		'value' => 0.00,
+		'decimal_mark' => '.',
+		'thousands_separator' => ',',
+		'unit_factor' => 100
+	],
+	[
+		'name' => 'Turkish lira',
+		'symbol_left' => '₺',
+		'symbol_right' => '',
+		'code' => 'TRY',
+		'decimal_place' => 2,
+		'value' => 0.00,
+		'decimal_mark' => '.',
+		'thousands_separator' => ',',
+		'unit_factor' => 100
+	],
+	[
+		'name' => 'Chilean peso',
+		'symbol_left' => '$',
+		'symbol_right' => '',
+		'code' => 'CLP',
+		'decimal_place' => 2,
+		'value' => 0.00,
+		'decimal_mark' => '.',
+		'thousands_separator' => ',',
+		'unit_factor' => 100
+	],
+	[
+		'name' => 'South African rand',
+		'symbol_left' => 'R',
+		'symbol_right' => '',
+		'code' => 'ZAR',
+		'decimal_place' => 2,
+		'value' => 0.00,
+		'decimal_mark' => '.',
+		'thousands_separator' => ',',
+		'unit_factor' => 100
+	],
+	[
+		'name' => 'Brazilian real',
+		'symbol_left' => 'R$',
+		'symbol_right' => '',
+		'code' => 'BRL',
+		'decimal_place' => 2,
+		'value' => 0.00,
+		'decimal_mark' => '.',
+		'thousands_separator' => ',',
+		'unit_factor' => 100
+	],
+	[
+		'name' => 'Malaysian ringgit',
+		'symbol_left' => 'RM',
+		'symbol_right' => '',
+		'code' => 'MYR',
+		'decimal_place' => 2,
+		'value' => 0.00,
+		'decimal_mark' => '.',
+		'thousands_separator' => ',',
+		'unit_factor' => 100
+	],
+	[
+		'name' => 'Russian ruble',
+		'symbol_left' => '₽',
+		'symbol_right' => '',
+		'code' => 'RUB',
+		'decimal_place' => 2,
+		'value' => 0.00,
+		'decimal_mark' => '.',
+		'thousands_separator' => ',',
+		'unit_factor' => 100
+	],
+	[
+		'name' => 'Indonesian rupiah',
+		'symbol_left' => 'Rp',
+		'symbol_right' => '',
+		'code' => 'IDR',
+		'decimal_place' => 2,
+		'value' => 0.00,
+		'decimal_mark' => '.',
+		'thousands_separator' => ',',
+		'unit_factor' => 100
+	],
+	[
+		'name' => 'Indian rupee',
+		'symbol_left' => '₹',
+		'symbol_right' => '',
+		'code' => 'INR',
+		'decimal_place' => 2,
+		'value' => 0.00,
+		'decimal_mark' => '.',
+		'thousands_separator' => ',',
+		'unit_factor' => 100
+	],
+	[
+		'name' => 'Korean won',
+		'symbol_left' => '₩',
+		'symbol_right' => '',
+		'code' => 'KRW',
+		'decimal_place' => 2,
+		'value' => 0.00,
+		'decimal_mark' => '.',
+		'thousands_separator' => ',',
+		'unit_factor' => 100
+	],
+	[
+		'name' => 'Renminbi',
+		'symbol_left' => '¥',
+		'symbol_right' => '',
+		'code' => 'CNY',
+		'decimal_place' => 2,
+		'value' => 0.00,
+		'decimal_mark' => '.',
+		'thousands_separator' => ',',
+		'unit_factor' => 100
+	],
+	[
+		'name' => 'Special drawing rights',
+		'symbol_left' => '',
+		'symbol_right' => '',
+		'code' => 'XDR',
+		'decimal_place' => 2,
+		'value' => 0.00,
+		'decimal_mark' => '.',
+		'thousands_separator' => ',',
+		'unit_factor' => 100
+	],
+];
