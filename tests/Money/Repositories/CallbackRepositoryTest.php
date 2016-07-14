@@ -8,27 +8,31 @@
 namespace Tests\Bnet\Money\Repositories;
 
 
+use Bnet\Money\Currency;
+use Bnet\Money\Repositories\CallbackRepository;
+use Bnet\Money\Repositories\Exception\CurrencyRepositoryException;
+
 class CallbackRepositoryTest extends \PHPUnit_Framework_TestCase {
 
 
 	public function testClosureWork() {
-		$r = new \Bnet\Money\Repositories\CallbackRepository(function($code) {
+		$r = new CallbackRepository(function($code) {
 			if ($code !== 'EUR')
-				throw new \Bnet\Money\Repositories\Exception\CurrencyRepositoryException;
+				throw new CurrencyRepositoryException;
 			return ['name' => 'TestCurrency'];
 		});
 		$this->assertEquals('TestCurrency', $r->get('EUR')['name'], 'Loading successfull');
 	}
 
 	public function testWithCurrency() {
-		$r = new \Bnet\Money\Repositories\CallbackRepository(function($code) {
+		$r = new CallbackRepository(function($code) {
 			if ($code !== 'EUR')
-				throw new \Bnet\Money\Repositories\Exception\CurrencyRepositoryException;
+				throw new CurrencyRepositoryException;
 			return ['name' => 'TestCurrency'];
 		});
 
-		\Bnet\Money\Currency::registerCurrencyRepository($r);
-		$c = new \Bnet\Money\Currency('EUR');
+		Currency::registerCurrencyRepository($r);
+		$c = new Currency('EUR');
 
 		$this->assertEquals('TestCurrency', $c->name, 'Name matches');
 	}

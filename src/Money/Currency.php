@@ -11,6 +11,12 @@ namespace Bnet\Money;
 use Bnet\Money\Repositories\CurrencyRepositoryInterface;
 use Bnet\Money\Repositories\Exception\CurrencyRepositoryException;
 
+/**
+ * Class Currency
+ * @package Bnet\Money
+ * @method static Currency EUR()
+ * @method static Currency USD()
+ */
 class Currency {
 
 	public static $default_currency = 'EUR';
@@ -103,9 +109,9 @@ class Currency {
 	 */
 	protected function assertRepository() {
 		if (!self::$repository instanceof CurrencyRepositoryInterface)
-			if (self::$use_default_currency_repository && file_exists(__DIR__.'../../currencies.php')) {
-				self::registerCurrencyRepository(new \Bnet\Money\Repositories\ArrayRepository(
-					include(__DIR__ . '../../currencies.php')
+			if (self::$use_default_currency_repository && file_exists(__DIR__.'/../../currencies.php')) {
+				self::registerCurrencyRepository(new Repositories\ArrayRepository(
+					include(__DIR__ . '/../../currencies.php')
 				));
 			} else {
 				throw new CurrencyRepositoryException;
@@ -114,11 +120,89 @@ class Currency {
 
 	/**
 	 * use a default repository with the main currencies if no repository is defined
-	 * @param boolean $use_default_currency_repository
+	 * @param bool $use
 	 * @return $this
+	 * @internal param bool $use_default_currency_repository
 	 */
 	public static function useDefaultCurrencyRepository($use=true) {
 		self::$use_default_currency_repository = $use;
 	}
 
+	/**
+	 * equals.
+	 *
+	 * @param Currency $currency
+	 *
+	 * @return bool
+	 */
+	public function equals(self $currency) {
+		return $this->code == $currency->code;
+	}
+
+	/**
+	 * __callStatic.
+	 *
+	 * @param string $method
+	 * @param array $arguments
+	 *
+	 * @return Currency
+	 */
+	public static function __callStatic($method, array $arguments) {
+		return new static($method);
+	}
+
+	/**
+	 * Get the instance as an array.
+	 *
+	 * @return array
+	 */
+	public function toArray() {
+		return [$this->code => [
+				'iso' => $this->iso,
+				'symbol_left' => $this->symbol_left,
+				'symbol_right' => $this->symbol_right,
+				'decimal_place' => $this->decimal_place,
+				'decimal_mark' => $this->decimal_mark,
+				'thousands_separator' => $this->thousands_separator,
+				'unit_factor' => $this->unit_factor
+			]
+		];
+	}
+
+	/**
+	 * Convert the object to its JSON representation.
+	 *
+	 * @param  int $options
+	 * @return string
+	 */
+	public function toJson($options = 0) {
+		return json_encode($this->toArray(), $options);
+	}
+
+	/**
+	 * jsonSerialize.
+	 *
+	 * @return array
+	 */
+	public function jsonSerialize() {
+		return $this->toArray();
+	}
+
+	/**
+	 * Get the evaluated contents of the object.
+	 *
+	 * @return string
+	 */
+	public function render() {
+		return $this->code . ' (' . $this->name . ')';
+	}
+
+	/**
+	 * __toString.
+	 *
+	 * @return string
+	 */
+	public function __toString() {
+		return $this->render();
+	}
 }

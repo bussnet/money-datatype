@@ -10,6 +10,13 @@ namespace Bnet\Money;
 
 use Illuminate\Support\Str;
 
+/**
+ * Class Money
+ * @package Bnet\Money
+ * 
+ * @method static Money EUR(int $amount)
+ * @method static Money USD(int $amount)
+ */
 class Money {
 
 	/**
@@ -29,7 +36,7 @@ class Money {
 	 * @throws MoneyException
 	 */
 	public function __construct($amount, $currency=null) {
-		if (intval($amount) != $amount) {
+		if (intval($amount) !== $amount) {
 			throw new MoneyException('Amount must be an integer');
 		}
 
@@ -161,6 +168,299 @@ class Money {
 		if ($units === '' || $units === '-') {
 			$units = '0';
 		}
-		return new static($units, $currency);
+		return new static((int)$units, $currency);
 	}
+
+	/**
+	 * @return Currency
+	 */
+	public function currency() {
+		return $this->currency;
+	}
+
+	/**
+	 * @param Money $money
+	 * @return bool
+	 */
+	public function isSameCurrency(Money $money) {
+		return $this->currency()->equals($money->currency());
+	}
+
+	/**
+	 * assertSameCurrency.
+	 *
+	 * @param Money $other
+	 *
+	 * @throws \InvalidArgumentException
+	 */
+	protected function assertSameCurrency(self $other) {
+		if (!$this->isSameCurrency($other)) {
+			throw new \InvalidArgumentException('Different currencies "' . $this->currency . '" and "' . $other->currency() . '"');
+		}
+	}
+
+	/**
+	 * compare.
+	 *
+	 * @param Money $other
+	 *
+	 * @return int
+	 *
+	 * @throws \InvalidArgumentException
+	 */
+	public function compare(self $other) {
+		$this->assertSameCurrency($other);
+		if ($this->amount < $other->amount) {
+			return -1;
+		}
+		if ($this->amount > $other->amount) {
+			return 1;
+		}
+		return 0;
+	}
+
+	/**
+	 * equals.
+	 *
+	 * @param Money $other
+	 *
+	 * @return bool
+	 */
+	public function equals(self $other) {
+		return $this->compare($other) == 0;
+	}
+
+	/**
+	 * greaterThan.
+	 *
+	 * @param Money $other
+	 *
+	 * @return bool
+	 */
+	public function greaterThan(self $other) {
+		return $this->compare($other) == 1;
+	}
+
+	/**
+	 * greaterThanOrEqual.
+	 *
+	 * @param Money $other
+	 *
+	 * @return bool
+	 */
+	public function greaterThanOrEqual(self $other) {
+		return $this->compare($other) >= 0;
+	}
+
+	/**
+	 * lessThan.
+	 *
+	 * @param Money $other
+	 *
+	 * @return bool
+	 */
+	public function lessThan(self $other) {
+		return $this->compare($other) == -1;
+	}
+
+	/**
+	 * lessThanOrEqual.
+	 *
+	 * @param Money $other
+	 *
+	 * @return bool
+	 */
+	public function lessThanOrEqual(self $other) {
+		return $this->compare($other) <= 0;
+	}
+
+	/**
+	 * add.
+	 *
+	 * @param Money $addend
+	 *
+	 * @return Money
+	 *
+	 * @throws \InvalidArgumentException
+	 */
+	public function add(self $addend) {
+		$this->assertSameCurrency($addend);
+		return new self($this->amount + $addend->amount, $this->currency);
+	}
+
+	/**
+	 * subtract.
+	 *
+	 * @param Money $subtrahend
+	 *
+	 * @return Money
+	 *
+	 * @throws \InvalidArgumentException
+	 */
+	public function subtract(self $subtrahend) {
+		$this->assertSameCurrency($subtrahend);
+		return new self($this->amount - $subtrahend->amount, $this->currency);
+	}
+
+	/**
+	 * multiply.
+	 *
+	 * @param int|float $multiplier
+	 * @param int $roundingMode
+	 *
+	 * @return Money
+	 *
+	 * @throws \InvalidArgumentException
+	 * @throws \OutOfBoundsException
+	 */
+	public function multiply($multiplier, $roundingMode = PHP_ROUND_HALF_UP) {
+		return new self((int)round($this->amount * $multiplier, 0, $roundingMode), $this->currency);
+	}
+
+	/**
+	 * assertOperand.
+	 *
+	 * @param int|float $operand
+	 *
+	 * @throws \InvalidArgumentException
+	 */
+	protected function assertOperand($operand) {
+		if (!is_int($operand) && !is_float($operand)) {
+			throw new \InvalidArgumentException('Operand "' . $operand . '" should be an integer or a float');
+		}
+	}
+
+	/**
+	 * divide.
+	 *
+	 * @param int|float $divisor
+	 * @param int $roundingMode
+	 *
+	 * @return Money
+	 *
+	 * @throws \InvalidArgumentException
+	 * @throws \OutOfBoundsException
+	 */
+	public function divide($divisor, $roundingMode = PHP_ROUND_HALF_UP) {
+		$this->assertOperand($divisor);
+		if ($divisor == 0) {
+			throw new \InvalidArgumentException('Division by zero');
+		}
+		return new self((int)round($this->amount / $divisor, 0, $roundingMode), $this->currency);
+	}
+
+	/**
+	 * allocate.
+	 *
+	 * @param array $ratios
+	 *
+	 * @return array
+	 */
+	public function allocate(array $ratios) {
+		$remainder = $this->amount;
+		$results = [];
+		$total = array_sum($ratios);
+		foreach ($ratios as $ratio) {
+			$share = (int)floor($this->amount * $ratio / $total);
+			$results[] = new self($share, $this->currency);
+			$remainder -= $share;
+		}
+		for ($i = 0; $remainder > 0; $i++) {
+			$results[$i]->amount++;
+			$remainder--;
+		}
+		return $results;
+	}
+
+	/**
+	 * isZero.
+	 *
+	 * @return bool
+	 */
+	public function isZero() {
+		return $this->amount == 0;
+	}
+
+	/**
+	 * isPositive.
+	 *
+	 * @return bool
+	 */
+	public function isPositive() {
+		return $this->amount > 0;
+	}
+
+	/**
+	 * isNegative.
+	 *
+	 * @return bool
+	 */
+	public function isNegative() {
+		return $this->amount < 0;
+	}
+
+	/**
+	 * Get the instance as an array.
+	 *
+	 * @return array
+	 */
+	public function toArray() {
+		return [
+			'amount' => $this->amount,
+			'number' => $this->normalize(),
+			'format' => $this->format(),
+			'currency' => $this->currency,
+		];
+	}
+
+	/**
+	 * Convert the object to its JSON representation.
+	 *
+	 * @param  int $options
+	 * @return string
+	 */
+	public function toJson($options = 0) {
+		return json_encode($this->toArray(), $options);
+	}
+
+	/**
+	 * jsonSerialize.
+	 *
+	 * @return array
+	 */
+	public function jsonSerialize() {
+		return $this->toArray();
+	}
+
+	/**
+	 * Get the evaluated contents of the object.
+	 *
+	 * @return string
+	 */
+	public function render() {
+		return $this->format();
+	}
+
+	/**
+	 * __toString.
+	 *
+	 * @return string
+	 */
+	public function __toString() {
+		return $this->render();
+	}
+
+	/**
+	 * __callStatic.
+	 *
+	 * @param string $method
+	 * @param array $arguments
+	 *
+	 * @return Money
+	 */
+	public static function __callStatic($method, array $arguments) {
+		$convert = (isset($arguments[1]) && is_bool($arguments[1])) ? (bool)$arguments[1] : false;
+		return new static($arguments[0], new Currency($method), $convert);
+	}
+
 }

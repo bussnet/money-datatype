@@ -8,6 +8,7 @@
 namespace Tests\Bnet\Money;
 
 
+use Bnet\Money\Currency;
 use Bnet\Money\Money;
 use Bnet\Money\MoneyException;
 use Bnet\Money\Repositories\ArrayRepository;
@@ -39,7 +40,7 @@ class MoneyTest extends \PHPUnit_Framework_TestCase {
 				'thousands_separator' => ',',
 			]
 		]);
-		\Bnet\Money\Currency::registerCurrencyRepository($r);
+		Currency::registerCurrencyRepository($r);
 	}
 
 	public function testBasicFunctions() {
@@ -52,7 +53,7 @@ class MoneyTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	protected function currency() {
-		$c = new \Bnet\Money\Currency('EUR', [
+		$c = new Currency('EUR', [
 			'code' => 'EUR',
 			'iso' => 978,
 			'name' => 'Euro',
@@ -166,4 +167,146 @@ class MoneyTest extends \PHPUnit_Framework_TestCase {
 		}
 	}
 
+
+	public function testFactoryMethods() {
+		$this->assertEquals(Money::EUR(25), Money::EUR(10)->add(Money::EUR(15)));
+		$this->assertEquals(Money::USD(25), Money::USD(10)->add(Money::USD(15)));
+	}
+
+	/**
+	 * @expectedException \Bnet\Money\MoneyException
+	 */
+	public function testStringThrowsException() {
+		new Money('foo', new Currency('EUR'));
+	}
+
+	public function testGetters() {
+		$m = new Money(100, new Currency('EUR'));
+		$this->assertEquals(100, $m->amount());
+		$this->assertEquals(1, $m->normalize());
+		$this->assertEquals(new Currency('EUR'), $m->currency());
+	}
+
+	public function testSameCurrency() {
+		$m = new Money(100, new Currency('EUR'));
+		$this->assertTrue($m->isSameCurrency(new Money(100, new Currency('EUR'))));
+		$this->assertFalse($m->isSameCurrency(new Money(100, new Currency('USD'))));
+	}
+
+	public function testComparison() {
+		$m1 = new Money(50, new Currency('EUR'));
+		$m2 = new Money(100, new Currency('EUR'));
+		$m3 = new Money(200, new Currency('EUR'));
+		$this->assertEquals(-1, $m2->compare($m3));
+		$this->assertEquals(1, $m2->compare($m1));
+		$this->assertEquals(0, $m2->compare($m2));
+		$this->assertTrue($m2->equals($m2));
+		$this->assertFalse($m3->equals($m2));
+		$this->assertTrue($m3->greaterThan($m2));
+		$this->assertFalse($m2->greaterThan($m3));
+		$this->assertTrue($m2->greaterThanOrEqual($m2));
+		$this->assertFalse($m2->greaterThanOrEqual($m3));
+		$this->assertTrue($m2->lessThan($m3));
+		$this->assertFalse($m3->lessThan($m2));
+		$this->assertTrue($m2->lessThanOrEqual($m2));
+		$this->assertFalse($m3->lessThanOrEqual($m2));
+	}
+
+	/**
+	 * @expectedException \InvalidArgumentException
+	 */
+	public function testDifferentCurrenciesCannotBeCompared() {
+		$m1 = new Money(100, new Currency('EUR'));
+		$m2 = new Money(100, new Currency('USD'));
+		$m1->compare($m2);
+	}
+
+	public function testAddition() {
+		$m1 = new Money(1100101, new Currency('EUR'));
+		$m2 = new Money(1100021, new Currency('EUR'));
+		$sum = $m1->add($m2);
+		$this->assertEquals(new Money(2200122, new Currency('EUR')), $sum);
+		$this->assertNotEquals($sum, $m1);
+		$this->assertNotEquals($sum, $m2);
+	}
+
+	/**
+	 * @expectedException \InvalidArgumentException
+	 */
+	public function testDifferentCurrenciesCannotBeAdded() {
+		$m1 = new Money(100, new Currency('EUR'));
+		$m2 = new Money(100, new Currency('USD'));
+		$m1->add($m2);
+	}
+
+	public function testSubtraction() {
+		$m1 = new Money(10010, new Currency('EUR'));
+		$m2 = new Money(10002, new Currency('EUR'));
+		$diff = $m1->subtract($m2);
+		$this->assertEquals(new Money(8, new Currency('EUR')), $diff);
+		$this->assertNotSame($diff, $m1);
+		$this->assertNotSame($diff, $m2);
+	}
+
+	/**
+	 * @expectedException \InvalidArgumentException
+	 */
+	public function testDifferentCurrenciesCannotBeSubtracted() {
+		$m1 = new Money(100, new Currency('EUR'));
+		$m2 = new Money(100, new Currency('USD'));
+		$m1->subtract($m2);
+	}
+
+	public function testMultiplication() {
+		$m1 = new Money(15, new Currency('EUR'));
+		$m2 = new Money(1, new Currency('EUR'));
+		$this->assertEquals($m1, $m2->multiply(15));
+		$this->assertNotEquals($m1, $m2->multiply(10));
+	}
+
+	public function testDivision() {
+		$m1 = new Money(3, new Currency('EUR'));
+		$m2 = new Money(10, new Currency('EUR'));
+		$this->assertEquals($m1, $m2->divide(3));
+		$this->assertNotEquals($m1, $m2->divide(2));
+	}
+
+	public function testAllocation() {
+		$m1 = new Money(100, new Currency('EUR'));
+		list($part1, $part2, $part3) = $m1->allocate([1, 1, 1]);
+		$this->assertEquals(new Money(34, new Currency('EUR')), $part1);
+		$this->assertEquals(new Money(33, new Currency('EUR')), $part2);
+		$this->assertEquals(new Money(33, new Currency('EUR')), $part3);
+		$m2 = new Money(101, new Currency('EUR'));
+		list($part1, $part2, $part3) = $m2->allocate([1, 1, 1]);
+		$this->assertEquals(new Money(34, new Currency('EUR')), $part1);
+		$this->assertEquals(new Money(34, new Currency('EUR')), $part2);
+		$this->assertEquals(new Money(33, new Currency('EUR')), $part3);
+	}
+
+	public function testAllocationOrderIsImportant() {
+		$m = new Money(5, new Currency('EUR'));
+		list($part1, $part2) = $m->allocate([3, 7]);
+		$this->assertEquals(new Money(2, new Currency('EUR')), $part1);
+		$this->assertEquals(new Money(3, new Currency('EUR')), $part2);
+		list($part1, $part2) = $m->allocate([7, 3]);
+		$this->assertEquals(new Money(4, new Currency('EUR')), $part1);
+		$this->assertEquals(new Money(1, new Currency('EUR')), $part2);
+	}
+
+	public function testComparators() {
+		$m1 = new Money(0, new Currency('EUR'));
+		$m2 = new Money(-1, new Currency('EUR'));
+		$m3 = new Money(1, new Currency('EUR'));
+		$m4 = new Money(1, new Currency('EUR'));
+		$m5 = new Money(1, new Currency('EUR'));
+		$m6 = new Money(-1, new Currency('EUR'));
+		$this->assertTrue($m1->isZero());
+		$this->assertTrue($m2->isNegative());
+		$this->assertTrue($m3->isPositive());
+		$this->assertFalse($m4->isZero());
+		$this->assertFalse($m5->isNegative());
+		$this->assertFalse($m6->isPositive());
+	}
+	 
 }

@@ -23,8 +23,8 @@ return [
 		'code' => 'EUR',
 		'decimal_place' => 2,
 		'value' => 0.74970001,
-		'decimal_mark' => '.',
-		'thousands_separator' => ',',
+		'decimal_mark' => ',',
+		'thousands_separator' => '.',
 		'unit_factor' => 100
 	],
 	[
