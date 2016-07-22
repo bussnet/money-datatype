@@ -204,8 +204,25 @@ Examples:
 
 ```
 
+### Use the CurrencyUpdater
+ 
+Download and parse a CurrencyFile and save it with a Closure
+
+Examples:
+```php
+
+		$updater = new \Bnet\Money\Updater\CurrencyUpdater();
+
+		$updater->update_currency_table(function($item) use($db) {
+			$db->save($item);
+		});
+
+```
+
 ## Changelog
 
+**0.1.4
+- add CurrencyUpdater to download and parse a file and save the data with a Closure 
 **0.1.3
 - add TaxedMoney for use MoneyObject with Tax 
 **0.1.2
