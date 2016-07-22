@@ -8,6 +8,7 @@
 namespace Bnet\Money;
 
 
+use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Support\Str;
 
 /**
@@ -17,7 +18,7 @@ use Illuminate\Support\Str;
  * @method static Money EUR(int $amount)
  * @method static Money USD(int $amount)
  */
-class Money {
+class Money implements \JsonSerializable, Jsonable{
 
 	/**
 	 * @var int cents of currency
@@ -36,7 +37,7 @@ class Money {
 	 * @throws MoneyException
 	 */
 	public function __construct($amount, $currency=null) {
-		if (intval($amount) !== $amount) {
+		if (!is_int($amount) && !ctype_digit($amount)) {
 			throw new MoneyException('Amount must be an integer');
 		}
 
@@ -409,7 +410,7 @@ class Money {
 			'amount' => $this->amount,
 			'number' => $this->normalize(),
 			'format' => $this->format(),
-			'currency' => $this->currency,
+			'currency' => $this->currency->code,
 		];
 	}
 
