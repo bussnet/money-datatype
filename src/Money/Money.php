@@ -211,10 +211,10 @@ class Money implements \JsonSerializable, Jsonable{
 	 */
 	public function compare(self $other) {
 		$this->assertSameCurrency($other);
-		if ($this->amount < $other->amount) {
+		if ($this->amount() < $other->amount()) {
 			return -1;
 		}
-		if ($this->amount > $other->amount) {
+		if ($this->amount() > $other->amount()) {
 			return 1;
 		}
 		return 0;
@@ -286,7 +286,7 @@ class Money implements \JsonSerializable, Jsonable{
 	 */
 	public function add(self $addend) {
 		$this->assertSameCurrency($addend);
-		return new self($this->amount + $addend->amount, $this->currency);
+		return new static($this->amount() + $addend->amount(), $this->currency);
 	}
 
 	/**
@@ -300,7 +300,7 @@ class Money implements \JsonSerializable, Jsonable{
 	 */
 	public function subtract(self $subtrahend) {
 		$this->assertSameCurrency($subtrahend);
-		return new self($this->amount - $subtrahend->amount, $this->currency);
+		return new static($this->amount() - $subtrahend->amount(), $this->currency);
 	}
 
 	/**
@@ -315,7 +315,7 @@ class Money implements \JsonSerializable, Jsonable{
 	 * @throws \OutOfBoundsException
 	 */
 	public function multiply($multiplier, $roundingMode = PHP_ROUND_HALF_UP) {
-		return new self((int)round($this->amount * $multiplier, 0, $roundingMode), $this->currency);
+		return new static((int)round($this->amount() * $multiplier, 0, $roundingMode), $this->currency);
 	}
 
 	/**
@@ -347,7 +347,7 @@ class Money implements \JsonSerializable, Jsonable{
 		if ($divisor == 0) {
 			throw new \InvalidArgumentException('Division by zero');
 		}
-		return new self((int)round($this->amount / $divisor, 0, $roundingMode), $this->currency);
+		return new static((int)round($this->amount() / $divisor, 0, $roundingMode), $this->currency);
 	}
 
 	/**
@@ -358,17 +358,21 @@ class Money implements \JsonSerializable, Jsonable{
 	 * @return array
 	 */
 	public function allocate(array $ratios) {
-		$remainder = $this->amount;
+		$remainder = $this->amount();
 		$results = [];
 		$total = array_sum($ratios);
 		foreach ($ratios as $ratio) {
-			$share = (int)floor($this->amount * $ratio / $total);
-			$results[] = new self($share, $this->currency);
+			$share = (int)floor($this->amount() * $ratio / $total);
+			$results[] = $share;
 			$remainder -= $share;
 		}
 		for ($i = 0; $remainder > 0; $i++) {
-			$results[$i]->amount++;
+			$results[$i]++;
 			$remainder--;
+		}
+		// generate MoneyObjects
+		foreach ($results as $k => $v) {
+			$results[$k] = new static($v, $this->currency);
 		}
 		return $results;
 	}
@@ -379,7 +383,7 @@ class Money implements \JsonSerializable, Jsonable{
 	 * @return bool
 	 */
 	public function isZero() {
-		return $this->amount == 0;
+		return $this->amount() == 0;
 	}
 
 	/**
@@ -388,7 +392,7 @@ class Money implements \JsonSerializable, Jsonable{
 	 * @return bool
 	 */
 	public function isPositive() {
-		return $this->amount > 0;
+		return $this->amount() > 0;
 	}
 
 	/**
@@ -397,7 +401,7 @@ class Money implements \JsonSerializable, Jsonable{
 	 * @return bool
 	 */
 	public function isNegative() {
-		return $this->amount < 0;
+		return $this->amount() < 0;
 	}
 
 	/**
@@ -407,7 +411,7 @@ class Money implements \JsonSerializable, Jsonable{
 	 */
 	public function toArray() {
 		return [
-			'amount' => $this->amount,
+			'amount' => $this->amount(),
 			'number' => $this->normalize(),
 			'format' => $this->format(),
 			'currency' => $this->currency->code,
@@ -464,4 +468,11 @@ class Money implements \JsonSerializable, Jsonable{
 		return new static($arguments[0], new Currency($method), $convert);
 	}
 
+	/**
+	 * has this MoneyObj tax options
+	 * @return bool
+	 */
+	public function hasTax() {
+		return false;
+	}
 }
