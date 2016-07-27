@@ -111,18 +111,13 @@ class TaxedMoney extends Money {
 	 */
 	public function amount($precision = 0) {
 		if ($this->amount_type == $this->default_return_type) {
-			$amount = parent::amount();
+			return parent::amount();
 		} elseif ($this->amount_type == self::TYPE_NET) {
-			$amount = $this->amountWithTax($precision);
+			return $this->amountWithTax($precision);
 		} elseif ($this->amount_type == self::TYPE_GROSS) {
-			$amount = $this->amountWithoutTax($precision);
-		} else {
-			throw new MoneyException('Problems with defined types in TaxedMoney');
+			return $this->amountWithoutTax($precision);
 		}
-		// cast to int if the precision is 0 for internal calculations that need and int
-		return $precision == 0
-			?(int)$amount
-			: $amount;
+		throw new MoneyException('Problems with defined types in TaxedMoney');
 	}
 
 	/**
@@ -174,6 +169,35 @@ class TaxedMoney extends Money {
 	 * @return float|int
 	 */
 	protected function round($amount, $precision=0) {
-		return round($amount, $precision);
+		$result = round($amount, $precision);
+		// cast to int if the precision is 0 for internal calculations that need an int
+		return $precision == 0
+			? (int)$result
+			: $result;
+
 	}
+
+	/**
+	 * Get the instance as an array.
+	 *
+	 * @return array
+	 */
+	public function toArray() {
+		$arr  = parent::toArray();
+		$arr['price_net'] = $this->amountWithoutTax();
+		$arr['price_gross'] = $this->amountWithTax();
+		$arr['tax'] = $this->tax;
+		return $arr;
+	}
+
+	/**
+	 * clone this MoneyObj with the given $amount and the currency of this obj
+	 * @param $amount
+	 * @param null $currency
+	 * @return static
+	 */
+	protected function dbl($amount, $currency = null) {
+		return new static($amount, $currency ?: $this->currency(), $this->tax, $this->amount_type, $this->default_return_type);
+	}
+
 }

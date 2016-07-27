@@ -8,6 +8,7 @@
 namespace Bnet\Money;
 
 
+use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Support\Str;
 
@@ -18,7 +19,7 @@ use Illuminate\Support\Str;
  * @method static Money EUR(int $amount)
  * @method static Money USD(int $amount)
  */
-class Money implements \JsonSerializable, Jsonable{
+class Money implements \JsonSerializable, Jsonable, Arrayable {
 
 	/**
 	 * @var int cents of currency
@@ -64,7 +65,7 @@ class Money implements \JsonSerializable, Jsonable{
 	 * @return float
 	 */
 	public function normalize() {
-		return bcdiv($this->amount(), $this->currency->unit_factor, $this->currency->decimal_place);
+		return (float)bcdiv($this->amount(), $this->currency->unit_factor, $this->currency->decimal_place);
 	}
 
 	/**
@@ -286,7 +287,7 @@ class Money implements \JsonSerializable, Jsonable{
 	 */
 	public function add(self $addend) {
 		$this->assertSameCurrency($addend);
-		return new static($this->amount() + $addend->amount(), $this->currency);
+		return $this->dbl($this->amount() + $addend->amount());
 	}
 
 	/**
@@ -300,7 +301,7 @@ class Money implements \JsonSerializable, Jsonable{
 	 */
 	public function subtract(self $subtrahend) {
 		$this->assertSameCurrency($subtrahend);
-		return new static($this->amount() - $subtrahend->amount(), $this->currency);
+		return $this->dbl($this->amount() - $subtrahend->amount());
 	}
 
 	/**
@@ -315,7 +316,7 @@ class Money implements \JsonSerializable, Jsonable{
 	 * @throws \OutOfBoundsException
 	 */
 	public function multiply($multiplier, $roundingMode = PHP_ROUND_HALF_UP) {
-		return new static((int)round($this->amount() * $multiplier, 0, $roundingMode), $this->currency);
+		return $this->dbl((int)round($this->amount() * $multiplier, 0, $roundingMode));
 	}
 
 	/**
@@ -347,7 +348,7 @@ class Money implements \JsonSerializable, Jsonable{
 		if ($divisor == 0) {
 			throw new \InvalidArgumentException('Division by zero');
 		}
-		return new static((int)round($this->amount() / $divisor, 0, $roundingMode), $this->currency);
+		return $this->dbl((int)round($this->amount() / $divisor, 0, $roundingMode));
 	}
 
 	/**
@@ -372,7 +373,7 @@ class Money implements \JsonSerializable, Jsonable{
 		}
 		// generate MoneyObjects
 		foreach ($results as $k => $v) {
-			$results[$k] = new static($v, $this->currency);
+			$results[$k] = $this->dbl($v);
 		}
 		return $results;
 	}
@@ -464,8 +465,7 @@ class Money implements \JsonSerializable, Jsonable{
 	 * @return Money
 	 */
 	public static function __callStatic($method, array $arguments) {
-		$convert = (isset($arguments[1]) && is_bool($arguments[1])) ? (bool)$arguments[1] : false;
-		return new static($arguments[0], new Currency($method), $convert);
+		return new static($arguments[0], new Currency($method));
 	}
 
 	/**
@@ -474,5 +474,15 @@ class Money implements \JsonSerializable, Jsonable{
 	 */
 	public function hasTax() {
 		return false;
+	}
+
+	/**
+	 * clone this MoneyObj with the given $amount and the currency of this obj
+	 * @param $amount
+	 * @param null $currency
+	 * @return static
+	 */
+	protected function dbl($amount, $currency=null) {
+		return new static($amount, $currency ?: $this->currency());
 	}
 }

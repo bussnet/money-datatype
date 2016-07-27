@@ -221,6 +221,8 @@ Examples:
 
 ## Changelog
 
+**0.1.5
+- FIX: calculation with TaxedMoney are now correct 
 **0.1.4
 - add CurrencyUpdater to download and parse a file and save the data with a Closure 
 **0.1.3
