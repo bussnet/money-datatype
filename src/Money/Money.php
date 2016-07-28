@@ -61,6 +61,14 @@ class Money implements \JsonSerializable, Jsonable, Arrayable {
 	}
 
 	/**
+	 * amount for internatl calculating - important for TaxedMoney
+	 * @return int
+	 */
+	protected function amountToCalc() {
+		return $this->amount;
+	}
+
+	/**
 	 * amount as decimal with . as decPoint
 	 * @return float
 	 */
@@ -287,7 +295,7 @@ class Money implements \JsonSerializable, Jsonable, Arrayable {
 	 */
 	public function add(self $addend) {
 		$this->assertSameCurrency($addend);
-		return $this->dbl($this->amount() + $addend->amount());
+		return $this->dbl($this->amountToCalc() + $addend->amountToCalc());
 	}
 
 	/**
@@ -301,7 +309,7 @@ class Money implements \JsonSerializable, Jsonable, Arrayable {
 	 */
 	public function subtract(self $subtrahend) {
 		$this->assertSameCurrency($subtrahend);
-		return $this->dbl($this->amount() - $subtrahend->amount());
+		return $this->dbl($this->amountToCalc() - $subtrahend->amountToCalc());
 	}
 
 	/**
@@ -316,7 +324,7 @@ class Money implements \JsonSerializable, Jsonable, Arrayable {
 	 * @throws \OutOfBoundsException
 	 */
 	public function multiply($multiplier, $roundingMode = PHP_ROUND_HALF_UP) {
-		return $this->dbl((int)round($this->amount() * $multiplier, 0, $roundingMode));
+		return $this->dbl((int)round($this->amountToCalc() * $multiplier, 0, $roundingMode));
 	}
 
 	/**
@@ -348,7 +356,7 @@ class Money implements \JsonSerializable, Jsonable, Arrayable {
 		if ($divisor == 0) {
 			throw new \InvalidArgumentException('Division by zero');
 		}
-		return $this->dbl((int)round($this->amount() / $divisor, 0, $roundingMode));
+		return $this->dbl((int)round($this->amountToCalc() / $divisor, 0, $roundingMode));
 	}
 
 	/**
@@ -359,11 +367,11 @@ class Money implements \JsonSerializable, Jsonable, Arrayable {
 	 * @return array
 	 */
 	public function allocate(array $ratios) {
-		$remainder = $this->amount();
+		$remainder = $this->amountToCalc();
 		$results = [];
 		$total = array_sum($ratios);
 		foreach ($ratios as $ratio) {
-			$share = (int)floor($this->amount() * $ratio / $total);
+			$share = (int)floor($this->amountToCalc() * $ratio / $total);
 			$results[] = $share;
 			$remainder -= $share;
 		}

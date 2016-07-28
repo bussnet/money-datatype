@@ -112,4 +112,18 @@ class TaxedMoneyTest extends MoneyTest {
 		$this->assertEquals(1190, $m->amountWithTax());
 	}
 
+	public function testMultiplication() {
+		$m1 = MoneyGross::fromNet(150, 10);
+		$m2 = MoneyGross::fromNet(10, 10);
+		$this->assertEquals($m1, $m2->multiply(15));
+		$this->assertNotEquals($m1, $m2->multiply(10));
+	}
+
+	public function testDivision() {
+		$m1 = $this->money(3, new \Bnet\Money\Currency('EUR'));
+		$m2 = $this->money(10, new \Bnet\Money\Currency('EUR'));
+		$this->assertEquals($m1, $m2->divide(3));
+		$this->assertNotEquals($m1, $m2->divide(2));
+	}
+
 }

@@ -108,14 +108,32 @@ class TaxedMoney extends Money {
 	 * return the gross/net amount as defined in $this->default_return_type
 	 * @param int $precision the number of precision positions for better calucations with the amount
 	 * @return int
+	 * @throws MoneyException
 	 */
 	public function amount($precision = 0) {
 		if ($this->amount_type == $this->default_return_type) {
 			return parent::amount();
-		} elseif ($this->amount_type == self::TYPE_NET) {
-			return $this->amountWithTax($precision);
-		} elseif ($this->amount_type == self::TYPE_GROSS) {
+		} elseif ($this->default_return_type == self::TYPE_NET) {
 			return $this->amountWithoutTax($precision);
+		} elseif ($this->default_return_type == self::TYPE_GROSS) {
+			return $this->amountWithTax($precision);
+		}
+		throw new MoneyException('Problems with defined types in TaxedMoney');
+	}
+
+	/**
+	 * amount for internatl calculating - important for TaxedMoney
+	 * @param int $precision
+	 * @return int
+	 * @throws MoneyException
+	 */
+	protected function amountToCalc($precision = 0) {
+		if ($this->amount_type == $this->default_return_type) {
+			return parent::amount();
+		} elseif ($this->amount_type == self::TYPE_NET) {
+			return $this->amountWithoutTax($precision);
+		} elseif ($this->amount_type == self::TYPE_GROSS) {
+			return $this->amountWithTax($precision);
 		}
 		throw new MoneyException('Problems with defined types in TaxedMoney');
 	}
