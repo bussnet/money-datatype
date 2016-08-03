@@ -23,7 +23,7 @@ class TaxedMoney extends Money {
 	/**
 	 * @var float|int the tax percentage for amount
 	 */
-	protected $tax;
+	public $tax;
 
 	/**
 	 * @var self::TYPE_GROSS|self::TYPE_NET which type is the amount field

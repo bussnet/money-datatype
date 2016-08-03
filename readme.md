@@ -221,6 +221,8 @@ Examples:
 
 ## Changelog
 
+**0.1.7
+- FIX: make $tax from TaxedMoney public to access the tax 
 **0.1.5
 - FIX: calculation with TaxedMoney are now correct 
 **0.1.4
