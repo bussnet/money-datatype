@@ -70,10 +70,10 @@ class Money implements \JsonSerializable, Jsonable, Arrayable {
 
 	/**
 	 * amount as decimal with . as decPoint
-	 * @return float
+	 * @return string
 	 */
 	public function normalize() {
-		return (float)bcdiv($this->amount(), $this->currency->unit_factor, $this->currency->decimal_place);
+		return bcdiv($this->amount(), $this->currency->unit_factor, $this->currency->decimal_place);
 	}
 
 	/**

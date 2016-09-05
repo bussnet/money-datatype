@@ -91,7 +91,7 @@ or execute
 	// int 123456
 	$m->amount();
 	
-	// float 1234.56
+	// string "1234.56"
 	$m->normalize();
 	
 	// 1234,56€

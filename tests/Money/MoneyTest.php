@@ -58,7 +58,7 @@ class MoneyTest extends \PHPUnit_Framework_TestCase {
 		$m = $this->money($amount, $this->currency());
 		$this->assertEquals($amount, $m->amount(), 'Amount');
 		$this->assertEquals($amount, $m->value(), 'Amount');
-		$this->assertEquals(1234.56, $m->normalize(), 'Normalize');
+		$this->assertEquals("1234.56", $m->normalize(), 'Normalize');
 		$this->assertEquals('1234,56€', $m->format(), 'default Format');
 	}
 
