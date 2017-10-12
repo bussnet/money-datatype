@@ -67,6 +67,15 @@ class Currency {
 	}
 
 	/**
+	 * @param $code
+	 * @param array $attributes
+	 * @return static
+	 */
+	public function getInstance($code, array $attributes = []) {
+		return new static($code, $attributes);
+	}
+
+	/**
 	 * register a repository for loading the currency attributes
 	 * @param CurrencyRepositoryInterface $repo
 	 */
