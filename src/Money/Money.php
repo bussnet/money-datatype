@@ -48,6 +48,38 @@ class Money implements \JsonSerializable, Jsonable, Arrayable {
 		$this->currency = $currency;
 	}
 
+	/**
+	 * @param $money
+	 * @return string
+	 * @throws MoneyException
+	 */
+	protected static function parseStringToUnit($money) {
+		$matches = null;
+		$sign = "(?P<sign>[-\+])?";
+		$digits1 = "(?P<digits1>\d*?)";
+		$separator1 = '(?P<separator1>[.,])??';
+		$digits2 = "(?P<digits2>\d*)";
+		$separator2 = '(?P<separator2>[.,])?';
+		$decimals = "(?P<decimal1>\d)?(?P<decimal2>\d)?";
+		$pattern = '/^' . $sign . $digits1 . $separator1 . $digits2 . $separator2 . $decimals . '$/';
+		if (!preg_match($pattern, trim($money), $matches)) {
+			throw new MoneyException('The value could not be parsed as money');
+		}
+		$units = $matches['sign'] === '-' ? '-' : '';
+		$units .= $matches['digits1'] . $matches['digits2'];
+		$units .= isset($matches['decimal1']) ? $matches['decimal1'] : '0';
+		$units .= isset($matches['decimal2']) ? $matches['decimal2'] : '0';
+		if ($matches['sign'] === '-') {
+			$units = '-' . ltrim(substr($units, 1), '0');
+		} else {
+			$units = ltrim($units, '0');
+		}
+		if ($units === '' || $units === '-') {
+			$units = '0';
+		}
+		return $units;
+	}
+
 
 	public function value() {
 		return $this->amount();
@@ -151,34 +183,12 @@ class Money implements \JsonSerializable, Jsonable, Arrayable {
 	 */
 	public static function parse($money, $currency=null) {
 		if (!is_string($money)) {
-			throw new MoneyException('Formatted raw money should be string, e.g. $1.00');
+			throw new MoneyException('Formatted raw money should be string, e.g. 1.00');
 		}
 		if (!$currency instanceof Currency)
 			$currency = new Currency($currency);
 
-		$sign = "(?P<sign>[-\+])?";
-		$digits1 = "(?P<digits1>\d*?)";
-		$separator1 = '(?P<separator1>[.,])??';
-		$digits2 = "(?P<digits2>\d*)";
-		$separator2 = '(?P<separator2>[.,])?';
-		$decimals = "(?P<decimal1>\d)?(?P<decimal2>\d)?";
-		$pattern = '/^' . $sign . $digits1 . $separator1 .$digits2 . $separator2 . $decimals . '$/';
-		if (!preg_match($pattern, trim($money), $matches)) {
-			throw new MoneyException('The value could not be parsed as money');
-		}
-		$units = $matches['sign'] === '-' ? '-' : '';
-		$units .= $matches['digits1']. $matches['digits2'];
-		$units .= isset($matches['decimal1']) ? $matches['decimal1'] : '0';
-		$units .= isset($matches['decimal2']) ? $matches['decimal2'] : '0';
-		if ($matches['sign'] === '-') {
-			$units = '-' . ltrim(substr($units, 1), '0');
-		} else {
-			$units = ltrim($units, '0');
-		}
-		if ($units === '' || $units === '-') {
-			$units = '0';
-		}
-		return new static((int)$units, $currency);
+		return new static((int)self::parseStringToUnit($money), $currency);
 	}
 
 	/**

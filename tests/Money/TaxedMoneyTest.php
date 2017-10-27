@@ -126,4 +126,23 @@ class TaxedMoneyTest extends MoneyTest {
 		$this->assertNotEquals($m1, $m2->divide(2));
 	}
 
+	/**
+	 * test parsing of money strings
+	 * @param $string
+	 * @param $units
+	 * @dataProvider provideStringsMoneyParsing
+	 */
+	public function testMoneyWithTaxParsing($string, $units) {
+		$tax = rand(5,19);
+		$m = $this->money($units);
+		try {
+			$parsed = TaxedMoney::parseWithTax($string, $tax);
+			$this->assertEquals($m->value(), $parsed->amountWithoutTax(), 'Value without Tax: ' . $string);
+			$this->assertEquals(round($m->value() * (($tax / 100) + 1)), $parsed->value(), 'Value with Tax: ' . $string);
+			$this->assertEquals($tax, $parsed->tax, 'Tax: ' . $string);
+		} catch (\Exception $e) {
+			$this->fail('Exception on Value: ' . $string . ' -> ' . $e->getMessage());
+		}
+	}
+
 }

@@ -64,6 +64,17 @@ class TaxedMoney extends Money {
 	}
 
 	/**
+	 * alias for parseFromGross
+	 * @param int $amount
+	 * @param float $tax tax percentage of the given amount
+	 * @param Currency|string $currency
+	 * @return static
+	 */
+	public static function parseFromBrutto($money, $tax, $currency=null) {
+		return static::parseFromGross($money, $tax, $currency);
+	}
+
+	/**
 	 * create a MoneyObject with the given Amount/Tax as Gross
 	 * @param int $amount
 	 * @param float $tax tax percentage of the given amount
@@ -73,6 +84,18 @@ class TaxedMoney extends Money {
 	public static function fromGross($amount, $tax, $currency = null) {
 		return new static($amount, $currency, $tax, self::TYPE_GROSS);
 	}
+
+	/**
+	 * create a MoneyObject with the given Amount/Tax as Gross from a string
+	 * @param int $amount
+	 * @param float $tax tax percentage of the given amount
+	 * @param Currency|string $currency
+	 * @return static
+	 */
+	public static function parseFromGross($money, $tax, $currency = null) {
+		return static::parseWithTax($money, $tax, $currency, self::TYPE_GROSS);
+	}
+
 
 	/**
 	 * alias for fromNet
@@ -86,6 +109,17 @@ class TaxedMoney extends Money {
 	}
 
 	/**
+	 * alias for parseFromNet
+	 * @param int $amount
+	 * @param float $tax tax percentage of the given amount
+	 * @param Currency|string $currency
+	 * @return static
+	 */
+	public static function parseFromNetto($money, $tax, $currency = null) {
+		return static::parseWithTax($money, $tax, $currency, self::TYPE_GROSS);
+	}
+
+	/**
 	 * create a MoneyObject with the given Amount/Tax as Net
 	 * @param int $amount
 	 * @param float $tax tax percentage of the given amount
@@ -94,6 +128,17 @@ class TaxedMoney extends Money {
 	 */
 	public static function fromNet($amount, $tax, $currency = null) {
 		return new static($amount, $currency, $tax, self::TYPE_NET);
+	}
+
+	/**
+	 * create a MoneyObject with the given Amount/Tax as Net from a string
+	 * @param int $amount
+	 * @param float $tax tax percentage of the given amount
+	 * @param Currency|string $currency
+	 * @return static
+	 */
+	public static function parseFromNet($money, $tax, $currency = null) {
+		return static::parseWithTax($money, $tax, $currency, self::TYPE_NET);
 	}
 
 	/**
@@ -216,6 +261,26 @@ class TaxedMoney extends Money {
 	 */
 	protected function dbl($amount, $currency = null) {
 		return new static($amount, $currency ?: $this->currency(), $this->tax, $this->amount_type, $this->default_return_type);
+	}
+
+	/**
+	 * parse a money string with the given tax
+	 * @param string $money money string without currency sign
+	 * @param int|float $tax
+	 * @param string|Currency $currency
+	 * @param int $input_type
+	 * @param int $default_return_type
+	 * @return static
+	 * @throws MoneyException
+	 */
+	public static function parseWithTax($money, $tax, $currency = null, $input_type = self::TYPE_NET, $default_return_type = self::TYPE_GROSS) {
+		if (!is_string($money)) {
+			throw new MoneyException('Formatted raw money should be string, e.g. 1.00');
+		}
+		if (!$currency instanceof Currency)
+			$currency = new Currency($currency);
+
+		return new static((int)self::parseStringToUnit($money), $currency, $tax, $input_type, $default_return_type);
 	}
 
 }
